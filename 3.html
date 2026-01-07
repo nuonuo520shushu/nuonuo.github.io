@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>博客详情 - 网页设计个人网站</title>
+  <link rel="stylesheet icon" href="pp.jpg">
+    <style>
+      /* ========== 基础样式重置 ========== */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #f9f6fc;
+        font-family: "Microsoft YaHei", sans-serif;
+        color: #333;
+        padding-top: 80px;
+        line-height: 1.6;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ========== 头部导航（全局共用） ========== */
+      .header {
+        width: 100%;
+        height: 80px;
+        padding: 0 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        box-shadow: 0 2px 10px rgba(156, 39, 176, 0.1);
+        border-bottom: 2px solid #9c27b0;
+      }
+      .logo h1 {
+        color: #9c27b0;
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+      }
+      .nav a {
+        font-size: 16px;
+        margin-left: 30px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: all 0.3s;
+        color: #333;
+      }
+      .nav a:hover {
+        background: #9c27b0;
+        color: #fff;
+      }
+      .menu-btn {
+        display: none;
+        font-size: 28px;
+        color: #9c27b0;
+        cursor: pointer;
+      }
+
+      /* ========== 主容器 ========== */
+      .detail-container {
+        width: 80%;
+        max-width: 900px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        padding: 40px;
+      }
+
+      /* ========== 文章头部 ========== */
+      .article-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #eee;
+      }
+      .article-title {
+        color: #9c27b0;
+        font-size: 32px;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+      .article-meta {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        font-size: 14px;
+        color: #666;
+      }
+      .article-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .category-tag {
+        background: #f3e5f5;
+        color: #9c27b0;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+      }
+
+      /* ========== 文章主体 ========== */
+      .article-content {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #444;
+      }
+      .article-content h2 {
+        color: #7b1fa2;
+        margin: 30px 0 15px;
+        font-size: 24px;
+        padding-left: 10px;
+        border-left: 4px solid #9c27b0;
+      }
+      .article-content h3 {
+        color: #9c27b0;
+        margin: 25px 0 12px;
+        font-size: 20px;
+      }
+      .article-content p {
+        margin-bottom: 20px;
+        text-align: justify;
+      }
+      .article-content ul,
+      .article-content ol {
+        margin: 20px 0 20px 30px;
+      }
+      .article-content li {
+        margin-bottom: 8px;
+      }
+      .article-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .article-content blockquote {
+        background: #f3e5f5;
+        border-left: 4px solid #9c27b0;
+        padding: 20px;
+        margin: 20px 0;
+        font-style: italic;
+        color: #666;
+      }
+      .article-content code {
+        background: #f5f5f5;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 14px;
+      }
+      .article-content pre {
+        background: #2d2d2d;
+        border-radius: 8px;
+        padding: 20px;
+        overflow-x: auto;
+        margin: 20px 0;
+      }
+      .article-content pre code {
+        background: none;
+        padding: 0;
+        color: #f8f8f2;
+      }
+
+      /* ========== 文章底部 ========== */
+      .article-footer {
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+      }
+      .article-nav {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .article-nav a {
+        color: #9c27b0;
+        border: 1px solid #ce93d8;
+        border-radius: 25px;
+        padding: 10px 20px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .article-nav a:hover {
+        background: #9c27b0;
+        color: #fff;
+        border-color: #9c27b0;
+      }
+      .share-buttons {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .share-buttons h4 {
+        color: #7b1fa2;
+        margin-bottom: 15px;
+      }
+      .share-buttons button {
+        background: #9c27b0;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        margin: 0 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 14px;
+      }
+      .share-buttons button:hover {
+        background: #7b1fa2;
+        transform: translateY(-2px);
+      }
+
+      /* ========== 评论区 ========== */
+      .comments-section {
+        margin-top: 50px;
+        padding-top: 40px;
+        border-top: 1px solid #eee;
+      }
+      .comments-section h3 {
+        color: #7b1fa2;
+        margin-bottom: 30px;
+        font-size: 24px;
+        text-align: center;
+      }
+      .comment-list {
+        margin-bottom: 40px;
+      }
+      .comment-item {
+        background: #f9f6fc;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #ce93d8;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .comment-main {
+        flex: 1;
+      }
+      .comment-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+      .comment-author {
+        font-weight: bold;
+        color: #9c27b0;
+      }
+      .comment-date {
+        font-size: 12px;
+        color: #999;
+      }
+      .comment-content {
+        color: #555;
+        line-height: 1.6;
+      }
+      .like-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        user-select: none;
+        color: #9c27b0;
+      }
+      .like-wrap.liked {
+        color: #e91e63;
+      }
+      .like-count {
+        font-size: 14px;
+      }
+
+      /* 新增删除按钮样式 */
+      .comment-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .delete-btn {
+        background: #f44336;
+        color: #fff;
+        border: none;
+        padding: 4px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: background 0.3s;
+      }
+      .delete-btn:hover {
+        background: #d32f2f;
+      }
+
+      .comment-form {
+        background: #f3e5f5;
+        padding: 30px;
+        border-radius: 8px;
+      }
+      .comment-form h4 {
+        color: #7b1fa2;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        color: #666;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ce93d8;
+        border-radius: 5px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+      }
+      .form-group textarea {
+        min-height: 120px;
+      }
+      .submit-btn {
+        background: #9c27b0;
+        color: #fff;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s;
+      }
+      .submit-btn:hover {
+        background: #7b1fa2;
+        transform: translateY(-2px);
+      }
+
+      /* ========== 页脚（全局共用） ========== */
+      footer {
+        text-align: center;
+        padding: 20px;
+        color: #7b1fa2;
+        background: #f3e5f5;
+        margin-top: 60px;
+        font-size: 14px;
+      }
+
+      /* ========== 响应式适配 ========== */
+      @media (max-width: 768px) {
+        .nav {
+          display: none;
+          flex-direction: column;
+          width: 100%;
+          background: #fff;
+          position: absolute;
+          top: 80px;
+          left: 0;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          padding: 10px 0;
+        }
+        .nav a {
+          margin: 5px 0;
+          text-align: center;
+          width: 100%;
+        }
+        .menu-btn {
+          display: block;
+        }
+        .nav.active {
+          display: flex;
+        }
+        .detail-container {
+          width: 92%;
+          padding: 20px;
+        }
+        .article-title {
+          font-size: 24px;
+        }
+        .article-meta {
+          flex-direction: column;
+          gap: 10px;
+        }
+        .article-nav {
+          flex-direction: column;
+          align-items: center;
+        }
+        .share-buttons button {
+          margin: 5px;
+          width: 100px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 头部导航（全局共用） -->
+    <header class="header">
+      <div class="logo"><h1>网页设计·个人主页</h1></div>
+      <div class="menu-btn" id="menuBtn">☰</div>
+      <nav class="nav" id="navMenu">
+        <a href="1.html">首页</a>
+        <a href="2.html">博客列表</a>
+        <a href="3.html">博客详情</a>
+        <a href="4.html">作品展示</a>
+        <a href="5.html">联系方式</a>
+      </nav>
+    </header>
+
+    <!-- 博客详情主容器 -->
+    <div class="detail-container">
+      <!-- 文章头部 -->
+      <header class="article-header">
+        <h1 class="article-title" id="articleTitle">
+          CSS Grid 布局的高级技巧与实战应用
+        </h1>
+        <div class="article-meta">
+          <span>📅 发布日期：<span id="publishDate">2026-01-01</span></span>
+          <span>🔄 更新时间：<span id="updateDate">2026-01-05</span></span>
+          <span class="category-tag" id="categoryTag">前端</span>
+          <span class="category-tag" id="tag">CSS</span>
+        </div>
+      </header>
+
+      <!-- 文章主体 -->
+      <article class="article-content" id="articleContent">
+        <!-- 动态插入文章内容 -->
+      </article>
+
+      <!-- 文章底部 -->
+      <footer class="article-footer">
+        <!-- 上一篇/下一篇导航 -->
+        <nav class="article-nav">
+          <a href="#" id="prevLink">← 上一篇：响应式设计的最佳实践</a>
+          <a href="#" id="nextLink">下一篇：JavaScript 性能优化指南 →</a>
+        </nav>
+
+        <!-- 分享按钮 -->
+        <div class="share-buttons">
+          <h4>分享文章</h4>
+          <button onclick="shareToWeibo()">分享到微博</button>
+          <button onclick="shareToWechat()">分享到微信</button>
+          <button onclick="copyLink()">复制链接</button>
+        </div>
+      </footer>
+
+      <!-- 评论区 -->
+      <section class="comments-section">
+        <h3>评论区</h3>
+        <!-- 评论列表 -->
+        <div class="comment-list" id="commentList"></div>
+        <!-- 评论表单 -->
+        <form class="comment-form" onsubmit="submitComment(event)">
+          <h4>发表评论</h4>
+          <div class="form-group">
+            <label for="name">姓名 *</label>
+            <input type="text" id="name" name="name" required />
+          </div>
+          <div class="form-group">
+            <label for="email">邮箱 *</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-group">
+            <label for="content">评论内容 *</label>
+            <textarea
+              id="content"
+              name="content"
+              required
+              placeholder="请输入您的评论..."
+            ></textarea>
+          </div>
+          <button type="submit" class="submit-btn">提交评论</button>
+        </form>
+      </section>
+    </div>
+
+    <!-- 页脚（全局共用） -->
+    <footer>
+      <p>© 2026 网页设计个人网站 版权所有</p>
+    </footer>
+
+    <!-- 引入 Prism.js 代码高亮 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <script>
+      /* ========== 多篇文章数据 ========== */
+      const articles = [
+        {
+          id: 1,
+          title: "CSS Grid 布局的高级技巧与实战应用",
+          publishDate: "2026-01-01",
+          updateDate: "2026-01-05",
+          category: "前端",
+          tag: "CSS",
+          content: `
+          <h2>引言</h2>
+          <p>CSS Grid 布局是近年来前端领域最具革命性的特性之一。它为我们提供了一种二维布局系统，让复杂的页面布局变得简单而优雅。本文将深入探讨 CSS Grid 的高级技巧，帮助你掌握这个强大的布局工具。</p>
+
+          <h2>基础概念回顾</h2>
+          <p>在深入高级技巧之前，让我们先简单回顾一下 CSS Grid 的基础概念：</p>
+          <ul>
+            <li><strong>网格容器（Grid Container）</strong>：应用了 <code>display: grid</code> 的元素</li>
+            <li><strong>网格项（Grid Item）</strong>：网格容器的直接子元素</li>
+            <li><strong>网格线（Grid Line）</strong>：构成网格结构的分界线</li>
+            <li><strong>网格轨道（Grid Track）</strong>：两条相邻网格线之间的空间</li>
+            <li><strong>网格区域（Grid Area）</strong>：四条网格线包围的空间</li>
+          </ul>
+
+          <h2>高级技巧一：命名网格线</h2>
+          <p>命名网格线可以让我们的代码更加语义化和易于维护。考虑以下示例：</p>
+          <pre><code class="language-css">.container {
+  display: grid;
+  grid-template-columns: [sidebar-start] 200px [sidebar-end content-start] 1fr [content-end];
+  grid-template-rows: [header-start] 80px [header-end main-start] 1fr [main-end footer-start] 60px [footer-end];
+}
+
+.header {
+  grid-column: sidebar-start / content-end;
+  grid-row: header-start / header-end;
+}</code></pre>
+
+          <h2>高级技巧二：隐式网格与网格自动放置</h2>
+          <p>当网格项超出显式定义的网格时，CSS Grid 会自动创建隐式网格轨道。我们可以通过 <code>grid-auto-rows</code> 和 <code>grid-auto-columns</code> 来控制这些隐式轨道的尺寸：</p>
+          <pre><code class="language-css">.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(100px, auto);
+  gap: 20px;
+}</code></pre>
+
+          <h2>实战案例：响应式卡片布局</h2>
+          <p>让我们通过一个实际的案例来展示 CSS Grid 的强大功能。我们将创建一个响应式的卡片布局，它会根据屏幕尺寸自动调整列数：</p>
+          <pre><code class="language-css">.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}</code></pre>
+
+          <h3>图片示例</h3>
+          <img src="https://via.placeholder.com/800x400/9c27b0/ffffff?text=CSS+Grid+Layout+Example" alt="CSS Grid 布局示例">
+
+          <h2>性能优化建议</h2>
+          <blockquote>
+            <p>虽然 CSS Grid 功能强大，但在使用时也需要注意性能问题。避免过度复杂的嵌套网格，合理使用显式和隐式网格，这些都能帮助提升页面渲染性能。</p>
+          </blockquote>
+
+          <h2>总结</h2>
+          <p>CSS Grid 布局为我们提供了前所未有的布局能力。通过掌握命名网格线、隐式网格、自动放置等高级技巧，我们能够创建更加灵活和强大的布局系统。希望本文的内容能够帮助你在实际项目中更好地运用 CSS Grid。</p>
+        `,
+        },
+        {
+          id: 2,
+          title: "响应式设计的最佳实践",
+          publishDate: "2026-01-05",
+          updateDate: "2026-01-07",
+          category: "前端",
+          tag: "设计",
+          content: `
+          <h2>为什么需要响应式设计？</h2>
+          <p>在多设备时代，用户可能通过手机、平板、笔记本、台式机甚至智能电视访问你的网站。响应式设计确保无论屏幕大小如何，用户都能获得最佳体验。</p>
+
+          <h2>移动优先策略</h2>
+          <p>移动优先意味着从最小屏幕开始设计，然后逐步增强到大屏幕。这种方法有以下优势：</p>
+          <ul>
+            <li>确保核心内容在所有设备上都能正常显示</li>
+            <li>减少不必要的代码和资源加载</li>
+            <li>更好的性能表现</li>
+          </ul>
+
+          <h2>弹性布局与媒体查询</h2>
+          <p>结合 CSS Grid 和 Flexbox 可以创建灵活的布局系统：</p>
+          <pre><code class="language-css">/* 移动优先的响应式布局 */
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}</code></pre>
+
+          <h2>图片优化策略</h2>
+          <p>使用 <code>srcset</code> 和 <code>sizes</code> 属性为不同屏幕提供合适大小的图片：</p>
+          <pre><code class="language-html">&lt;img 
+  src="small.jpg"
+  srcset="small.jpg 480w, medium.jpg 768w, large.jpg 1024w"
+  sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw"
+  alt="响应式图片示例"&gt;</code></pre>
+
+          <h2>测试工具推荐</h2>
+          <p>以下是一些实用的响应式设计测试工具：</p>
+          <ol>
+            <li><strong>Chrome DevTools</strong> - 内置设备模拟器</li>
+            <li><strong>Responsinator</strong> - 在线多设备预览</li>
+            <li><strong>BrowserStack</strong> - 真实设备测试</li>
+          </ol>
+
+          <h2>总结</h2>
+          <p>响应式设计不仅仅是技术实现，更是一种以用户为中心的设计理念。通过移动优先、弹性布局、优化资源加载等策略，我们可以为用户提供一致且优质的跨设备体验。</p>
+        `,
+        },
+        {
+          id: 3,
+          title: "JavaScript 性能优化指南",
+          publishDate: "2026-01-10",
+          updateDate: "2026-01-12",
+          category: "技术",
+          tag: "JavaScript",
+          content: `
+          <h2>性能优化的重要性</h2>
+          <p>JavaScript 性能直接影响用户体验。研究表明，页面加载时间每增加 1 秒，用户满意度就会下降 16%。本文将从多个维度为你剖析 JavaScript 的性能瓶颈和优化策略。</p>
+
+          <h2>渲染优化</h2>
+          <p>避免强制同步布局（Forced Synchronous Layout）是提升渲染性能的关键：</p>
+          <pre><code class="language-javascript">// 不好的做法：强制同步布局
+function badLayout() {
+  const width = element.offsetWidth; // 读取
+  element.style.width = width + 10 + 'px'; // 写入
+  const height = element.offsetHeight; // 再次读取（强制布局）
+  element.style.height = height + 10 + 'px'; // 再次写入
+}
+
+// 好的做法：批量读写
+function goodLayout() {
+  // 读取阶段
+  const width = element.offsetWidth;
+  const height = element.offsetHeight;
+  
+  // 写入阶段
+  element.style.width = width + 10 + 'px';
+  element.style.height = height + 10 + 'px';
+}</code></pre>
+
+          <h2>内存管理</h2>
+          <p>及时清理不再使用的对象引用，避免内存泄漏：</p>
+          <pre><code class="language-javascript">class DataManager {
+  constructor() {
+    this.cache = new Map();
+  }
+  
+  addData(id, data) {
+    this.cache.set(id, data);
+  }
+  
+  removeData(id) {
+    this.cache.delete(id); // 及时清理
+  }
+  
+  clear() {
+    this.cache.clear(); // 清空所有引用
+  }
+}</code></pre>
+
+          <h2>异步加载与缓存策略</h2>
+          <p>使用动态导入实现代码分割，减少初始加载时间：</p>
+          <pre><code class="language-javascript">// 路由懒加载示例
+const routes = [
+  {
+    path: '/dashboard',
+    component: () => import('./pages/Dashboard.js') // 动态导入
+  },
+  {
+    path: '/settings',
+    component: () => import('./pages/Settings.js')
+  }
+];</code></pre>
+
+          <h2>Web Workers 优化计算密集型任务</h2>
+          <p>将复杂计算移至后台线程，避免阻塞主线程：</p>
+          <pre><code class="language-javascript">// main.js
+const worker = new Worker('worker.js');
+
+worker.postMessage({ cmd: 'calculate', data: largeDataSet });
+
+worker.onmessage = (e) => {
+  console.log('计算结果：', e.data.result);
+};
+
+// worker.js
+self.onmessage = (e) => {
+  if (e.data.cmd === 'calculate') {
+    const result = performComplexCalculation(e.data.data);
+    self.postMessage({ result });
+  }
+};</code></pre>
+
+          <h2>性能监控工具</h2>
+          <blockquote>
+            <p>Chrome DevTools 的 Performance 面板是分析 JavaScript 性能的利器。通过录制运行时性能，可以识别长任务、内存泄漏等问题。</p>
+          </blockquote>
+
+          <h2>总结</h2>
+          <p>JavaScript 性能优化是一个系统工程，需要从渲染、内存、网络、计算等多个维度综合考虑。通过合理使用工具、遵循最佳实践，我们可以显著提升应用的响应速度和用户体验。</p>
+        `,
+        },
+      ];
+
+      let currentArticleIndex = 0;
+
+      /* ========== 移动端菜单切换 ========== */
+      const menuBtn = document.getElementById("menuBtn");
+      const navMenu = document.getElementById("navMenu");
+      menuBtn.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+        menuBtn.textContent = navMenu.classList.contains("active") ? "✕" : "☰";
+      });
+
+      /* ========== 渲染文章 ========== */
+      function renderArticle(index) {
+        const article = articles[index];
+        document.getElementById("articleTitle").textContent = article.title;
+        document.getElementById("publishDate").textContent =
+          article.publishDate;
+        document.getElementById("updateDate").textContent = article.updateDate;
+        document.getElementById("categoryTag").textContent = article.category;
+        document.getElementById("tag").textContent = article.tag;
+        document.getElementById("articleContent").innerHTML = article.content;
+
+        // 更新上一篇/下一篇
+        const prevLink = document.getElementById("prevLink");
+        const nextLink = document.getElementById("nextLink");
+
+        if (index === 0) {
+          prevLink.style.visibility = "hidden";
+        } else {
+          prevLink.style.visibility = "visible";
+          prevLink.onclick = (e) => {
+            e.preventDefault();
+            currentArticleIndex--;
+            renderArticle(currentArticleIndex);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          };
+          prevLink.textContent = `← 上一篇：${articles[index - 1].title}`;
+        }
+
+        if (index === articles.length - 1) {
+          nextLink.style.visibility = "hidden";
+        } else {
+          nextLink.style.visibility = "visible";
+          nextLink.onclick = (e) => {
+            e.preventDefault();
+            currentArticleIndex++;
+            renderArticle(currentArticleIndex);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          };
+          nextLink.textContent = `下一篇：${articles[index + 1].title} →`;
+        }
+
+        // 重新高亮代码
+        Prism.highlightAll();
+        // 重新加载评论
+        loadComments();
+      }
+
+      /* ========== 分享功能 ========== */
+      function shareToWeibo() {
+        const title = articles[currentArticleIndex].title;
+        const url = window.location.href;
+        window.open(
+          `https://service.weibo.com/share/share.php?title=${encodeURIComponent(
+            title
+          )}&url=${encodeURIComponent(url)}`
+        );
+      }
+
+      function shareToWechat() {
+        alert("请使用微信扫一扫功能分享本文链接");
+      }
+
+      function copyLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          alert("链接已复制到剪贴板！");
+        });
+      }
+
+      /* ========== 评论功能 ========== */
+      function loadComments() {
+        const articleId = articles[currentArticleIndex].id;
+        const comments = JSON.parse(
+          localStorage.getItem(`comments_${articleId}`) || "[]"
+        );
+        const commentList = document.getElementById("commentList");
+        commentList.innerHTML = "";
+        comments.forEach((comment) => renderComment(comment));
+      }
+
+      function renderComment(comment) {
+        const commentList = document.getElementById("commentList");
+        const item = document.createElement("div");
+        item.className = "comment-item";
+        item.innerHTML = `
+        <div class="comment-main">
+          <div class="comment-header">
+            <span class="comment-author">${comment.name} ${
+          comment.email ? `<small>(${comment.email})</small>` : ""
+        }</span>
+            <span class="comment-date">${comment.time}</span>
+          </div>
+          <div class="comment-content">${comment.content}</div>
+          <div class="comment-actions">
+            <button class="delete-btn" onclick="deleteComment('${
+              comment.id
+            }')">删除</button>
+          </div>
+        </div>
+        <div class="like-wrap ${
+          comment.liked ? "liked" : ""
+        }" onclick="toggleLike('${comment.id}')">
+          <span>👍</span>
+          <span class="like-count">${comment.likes || 0}</span>
+        </div>
+      `;
+        commentList.appendChild(item);
+      }
+
+      function toggleLike(commentId) {
+        const articleId = articles[currentArticleIndex].id;
+        const comments = JSON.parse(
+          localStorage.getItem(`comments_${articleId}`) || "[]"
+        );
+        const comment = comments.find((c) => c.id === commentId);
+        if (comment) {
+          comment.liked = !comment.liked;
+          comment.likes = (comment.likes || 0) + (comment.liked ? 1 : -1);
+          localStorage.setItem(
+            `comments_${articleId}`,
+            JSON.stringify(comments)
+          );
+          loadComments();
+        }
+      }
+
+      function deleteComment(commentId) {
+        if (!confirm("确定要删除这条评论吗？")) return;
+        const articleId = articles[currentArticleIndex].id;
+        let comments = JSON.parse(
+          localStorage.getItem(`comments_${articleId}`) || "[]"
+        );
+        comments = comments.filter((c) => c.id !== commentId);
+        localStorage.setItem(`comments_${articleId}`, JSON.stringify(comments));
+        loadComments();
+        alert("评论已删除");
+      }
+
+      function submitComment(event) {
+        event.preventDefault();
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const content = document.getElementById("content").value.trim();
+        if (!name || !content) return;
+
+        const articleId = articles[currentArticleIndex].id;
+        const comments = JSON.parse(
+          localStorage.getItem(`comments_${articleId}`) || "[]"
+        );
+        const newComment = {
+          id: Date.now().toString(),
+          name,
+          email,
+          content,
+          time: new Date().toLocaleString(),
+          likes: 0,
+          liked: false,
+        };
+        comments.unshift(newComment);
+        localStorage.setItem(`comments_${articleId}`, JSON.stringify(comments));
+
+        // 发送到邮箱（模拟）
+        const subject = `新评论：${articles[currentArticleIndex].title}`;
+        const body = `姓名：${name}%0A邮箱：${email}%0A内容：${content}`;
+        console.log(
+          `mailto:your_email@example.com?subject=${encodeURIComponent(
+            subject
+          )}&body=${encodeURIComponent(body)}`
+        );
+
+        renderComment(newComment);
+        event.target.reset();
+        alert("评论发表成功！");
+      }
+
+      /* ========== 初始化 ========== */
+      renderArticle(currentArticleIndex);
+    </script>
+  </body>
+</html>
